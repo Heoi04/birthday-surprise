@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Birthday Surprise</title>
+
+<style>
+/* General Body */
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    text-align:center;
+    background: linear-gradient(120deg,#ff9a9e,#fad0c4);
+    overflow-x:hidden;
+    overflow-y:auto;
+}
+
+/* Title */
+h1{
+    margin-top:10vh;
+    font-size:6vw;
+    color:white;
+    line-height:1.2;
+}
+
+/* Button */
+button{
+    padding:2vw 4vw;
+    font-size:3vw;
+    border:none;
+    border-radius:25px;
+    background:#ff4b5c;
+    color:white;
+    cursor:pointer;
+    margin-top:3vh;
+    transition:0.3s;
+}
+button:hover{
+    background:#ff1e40;
+}
+
+/* Message */
+#message{
+    display:none;
+    font-size:4vw;
+    color:white;
+    margin-top:2vh;
+}
+
+/* Balloons */
+.balloon{
+    position:absolute;
+    bottom:-15vh;
+    width:8vw;
+    max-width:50px;
+    height:10vw;
+    max-height:60px;
+    border-radius:50%;
+    animation:float 10s infinite;
+}
+@keyframes float{
+    0%{ transform:translateY(0);}
+    100%{ transform:translateY(-120vh);}
+}
+
+/* Confetti */
+.confetti{
+    position:fixed;
+    width:2vw;
+    max-width:8px;
+    height:2vw;
+    max-height:8px;
+    top:-10px;
+    animation:fall 5s linear infinite;
+}
+@keyframes fall{
+    0%{ transform:translateY(0);}
+    100%{ transform:translateY(100vh);}
+}
+
+/* Bonus Image Full Screen */
+#bonusImage{
+    display: none;  
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+#bonusImage img{
+    max-width: 80%;
+    max-height:70%;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #fff;
+}
+#bonusImage button{
+    margin-top:15px;
+    padding: 8px 16px;
+    font-size:4vw;
+}
+
+/* Footer */
+footer{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 1vw;  /* smaller font */
+    color: white;
+    padding: 2vh 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 500;
+}
+</style>
+</head>
+<body>
+
+<!-- Main content wrapped in a div, hidden until correct password -->
+<div id="mainContent" style="display:none;">
+
+<h1 id="title"></h1>
+
+<button id="surpriseBtn" onclick="startParty()">Click for Surprise 🎉</button>
+
+<div id="message">🎉 Hope you enjoy the surprise! 🎉</div>
+
+<!-- Bonus Fullscreen Image -->
+<div id="bonusImage">
+    <img src="ziyann.jpeg" alt="Bonus Gift"> <!-- replace 'gift.png' with your local image -->
+    <button onclick="closeBonus()">Close Gift 🎁</button>
+</div>
+
+<audio id="music" loop>
+    <source src="https://www.orangefreesounds.com/wp-content/uploads/2016/06/Happy-birthday-song.mp3" type="audio/mpeg">
+</audio>
+
+<footer>
+    🎈 Created by ZiYann Heoi 🎈
+</footer>
+
+</div>
+
+<script>
+// ================= Password Prompt =================
+const correctPassword = "0317"; // set your password here
+
+function askPassword() {
+    let attempts = 3;
+    while(attempts > 0){
+        let input = prompt("Enter the password to view this page:");
+        if(input === null){
+            alert("You must enter the password to view this page.");
+            continue;
+        }
+        if(input === correctPassword){
+            document.getElementById("mainContent").style.display = "block";
+            return;
+        } else {
+            attempts--;
+            alert("Incorrect password! Attempts left: " + attempts);
+        }
+    }
+    alert("Sorry, you cannot access this page.");
+    document.body.innerHTML = "<h2 style='text-align:center;margin-top:20vh;'>Access Denied</h2>";
+}
+
+askPassword(); // run immediately
+
+// ================= Birthday Functionality =================
+let title = document.getElementById("title");
+title.innerText = getGreeting();
+
+function getGreeting() {
+    let hour = new Date().getHours();
+    if(hour >= 5 && hour < 12) return "Good morning, ZiYann!";
+    else if(hour >=12 && hour < 18) return "Good afternoon, ZiYann!";
+    else return "Good evening, ZiYann!";
+}
+
+let clickCount = 0;
+
+function startParty(){
+    clickCount++;
+
+    // Change greeting
+    title.innerHTML = "🎉 Happy Birthday! 🎉<br>🎂 ZiYann 🎂";
+
+    // Show message
+    document.getElementById("message").style.display = "block";
+
+    // Play music
+    let music = document.getElementById("music");
+    if(music.paused) music.play();
+
+    // Create balloons
+    for(let i=0;i<10;i++){
+        let balloon=document.createElement("div");
+        balloon.className="balloon";
+        balloon.style.left=Math.random()*100+"%";
+        balloon.style.backgroundColor="hsl("+Math.random()*360+",70%,60%)";
+        balloon.style.animationDuration=(6+Math.random()*5)+"s";
+        document.body.appendChild(balloon);
+
+        setTimeout(()=>{ balloon.remove(); }, 10000);
+    }
+
+    // Create confetti
+    for(let i=0;i<100;i++){
+        let conf=document.createElement("div");
+        conf.className="confetti";
+        conf.style.left=Math.random()*100+"%";
+        conf.style.backgroundColor="hsl("+Math.random()*360+",100%,50%)";
+        conf.style.animationDuration=(3+Math.random()*2)+"s";
+        document.body.appendChild(conf);
+
+        setTimeout(()=>{ conf.remove(); }, 5000);
+    }
+
+    // Show bonus image only after 3 clicks
+    if(clickCount >= 3){
+        document.getElementById("bonusImage").style.display = "flex";
+    }
+}
+
+function closeBonus(){
+    document.getElementById("bonusImage").style.display = "none";
+}
+</script>
+
+</body>
+</html>
